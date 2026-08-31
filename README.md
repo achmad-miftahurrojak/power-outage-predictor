@@ -1,95 +1,95 @@
 # Power Outage Predictor
 
-Power Outage Predictor is an ESP32-based monitoring system for early detection of electrical disturbances and outages. It measures AC voltage, identifies warning conditions before a total blackout, and sends alerts through SMS and MQTT for faster response.
+Power Outage Predictor is an ESP32-based monitoring system designed for the early detection of electrical disturbances and outages. It measures AC voltage, identifies warning conditions before a complete blackout, and sends alerts through SMS and MQTT to support faster response and better operational awareness.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PlatformIO](https://img.shields.io/badge/PlatformIO-ESP32-blue.svg)](https://platformio.org/)
 
-## Deskripsi Proyek
+## Project Overview
 
-Project ini dirancang untuk memantau kualitas listrik pada sistem rumah tangga atau fasilitas kecil. Dengan kombinasi sensor tegangan, pemrosesan state machine, log ke SD card, serta notifikasi melalui SMS dan MQTT, perangkat ini dapat membantu mendeteksi awal adanya penurunan tegangan dan pemadaman listrik secara lebih cepat.
+This project is intended for monitoring electrical quality in residential or small commercial environments. By combining AC voltage sensing, state machine logic, SD card logging, and remote notifications over SMS and MQTT, the system helps detect early voltage drops and power interruptions before they escalate.
 
 Tags: esp32, iot, power-monitoring
 
-## Fitur
+## Features
 
-- Monitoring tegangan AC secara real time menggunakan sensor ZMPT101B
-- Deteksi dini penurunan tegangan sebelum pemadaman total terjadi
-- Status sistem yang terstruktur: NORMAL, WARNING, OUTAGE, dan RESTORED
-- Peringatan lokal melalui LED dan buzzer
-- Notifikasi jarak jauh menggunakan SMS dan MQTT
-- Penyimpanan data historis ke microSD card dengan timestamp RTC
-- Validasi perangkat keras menggunakan mode testing yang dapat diaktifkan secara terpisah
+- Real-time AC voltage monitoring using the ZMPT101B sensor
+- Early detection of voltage decline before a complete outage occurs
+- Structured system states: NORMAL, WARNING, OUTAGE, and RESTORED
+- Local alerts through LEDs and a buzzer
+- Remote notifications using SMS and MQTT
+- Historical data logging to microSD card with RTC timestamping
+- Hardware validation using a dedicated testing mode
 
 ## Hardware
 
-### Komponen utama
+### Main components
 
 - ESP32 development board
-- Sensor tegangan AC ZMPT101B
-- Modul GSM SIM800L
-- RTC DS3231
-- Modul microSD card
-- LED indikator hijau, kuning, dan merah
-- Buzzer aktif
-- Resistor, kabel jumper, dan rangkaian pendukung
+- ZMPT101B AC voltage sensor
+- SIM800L GSM module
+- DS3231 RTC module
+- microSD card module
+- Green, yellow, and red indicator LEDs
+- Active buzzer
+- Resistors, jumper wires, and supporting circuitry
 
-### Konfigurasi pin
+### Pin configuration
 
 ```text
-ESP32 Pin    | Komponen        | Fungsi
+ESP32 Pin    | Component       | Function
 -------------|-----------------|------------------
-GPIO32       | ZMPT101B        | Input ADC
+GPIO32       | ZMPT101B        | ADC input
 GPIO16/17    | SIM800L         | UART RX/TX
 GPIO5        | SD Card         | CS
 GPIO18/19/23 | SD Card         | SCK/MISO/MOSI
 GPIO21/22    | DS3231 RTC      | SDA/SCL
-GPIO13/14/27 | LED             | Hijau/Kuning/Merah
-GPIO4        | Buzzer          | Output digital
+GPIO13/14/27 | LED             | Green/Yellow/Red
+GPIO4        | Buzzer          | Digital output
 ```
 
-## Persyaratan
+## Requirements
 
-- PlatformIO Core atau PlatformIO IDE
+- PlatformIO Core or PlatformIO IDE
 - Git
-- ESP32 board yang kompatibel
+- Compatible ESP32 board
 
-## Instalasi
+## Installation
 
-1. Clone repository.
+1. Clone the repository.
 
 ```bash
 git clone https://github.com/username/power-outage-predictor.git
 cd power-outage-predictor
 ```
 
-2. Install dependency library.
+2. Install the required libraries.
 
 ```bash
 pio lib install
 ```
 
-3. Build proyek.
+3. Build the project.
 
 ```bash
 pio run
 ```
 
-4. Upload ke ESP32.
+4. Upload the firmware to the ESP32.
 
 ```bash
 pio run --target upload
 ```
 
-5. Monitor output serial.
+5. Monitor the serial output.
 
 ```bash
 pio device monitor
 ```
 
-## Konfigurasi
+## Configuration
 
-### Konfigurasi perangkat keras
+### Hardware configuration
 
 File: `include/config.h`
 
@@ -100,7 +100,7 @@ File: `include/config.h`
 #define ZMPT101B_CALIBRATION 500.0
 ```
 
-### Konfigurasi kredensial
+### Credentials configuration
 
 File: `include/secrets.h`
 
@@ -119,33 +119,33 @@ File: `include/secrets.h`
 #define APN_PASSWORD ""
 ```
 
-### Kalibrasi sensor
+### Sensor calibration
 
-1. Hubungkan sensor ZMPT101B ke sumber AC yang diketahui.
-2. Baca output serial untuk melihat nilai tegangan.
-3. Sesuaikan `ZMPT101B_CALIBRATION` sampai hasil pembacaan sesuai dengan alat ukur yang digunakan.
+1. Connect the ZMPT101B sensor to a known AC source.
+2. Read the serial output to inspect the measured voltage.
+3. Adjust `ZMPT101B_CALIBRATION` until the value matches the reference instrument used for testing.
 
-## Cara penggunaan
+## Usage
 
-### Kondisi normal
+### Normal operation
 
-1. Nyalakan perangkat.
-2. LED hijau menunjukkan status NORMAL.
-3. Sistem memantau tegangan setiap detik.
-4. Data dicatat ke SD card secara berkala.
+1. Power on the device.
+2. The green LED indicates the NORMAL state.
+3. The system monitors voltage continuously.
+4. Data is logged to the SD card at regular intervals.
 
-### Deteksi kejadian
+### Event detection
 
-- WARNING: terjadi penurunan tegangan yang signifikan
-- OUTAGE: tegangan turun di bawah ambang pemadaman
-- RESTORED: kondisi listrik kembali normal
+- WARNING: a significant voltage drop is detected
+- OUTAGE: voltage falls below the outage threshold
+- RESTORED: power is back to normal
 
-### Monitoring jarak jauh
+### Remote monitoring
 
-- MQTT topic yang digunakan: `power-monitor/telemetry`, `power-monitor/events`, dan `power-monitor/status`
-- SMS akan dikirim otomatis saat terjadi outage dan saat kondisi normal kembali
+- MQTT topics used: `power-monitor/telemetry`, `power-monitor/events`, and `power-monitor/status`
+- SMS alerts are automatically sent when an outage occurs and when service is restored
 
-## Struktur direktori
+## Directory Structure
 
 ```text
 power-outage-predictor/
@@ -170,7 +170,7 @@ power-outage-predictor/
     └── test_main.cpp
 ```
 
-## State machine
+## State Machine
 
 ```cpp
 enum SystemState {
@@ -181,9 +181,9 @@ enum SystemState {
 };
 ```
 
-## Pengujian perangkat keras
+## Hardware Testing
 
-Mode pengujian dapat diaktifkan melalui macro di `src/hw_tests.h`.
+Testing mode can be enabled through macros defined in `src/hw_tests.h`.
 
 ```cpp
 // #define TEST_LEDS
@@ -193,27 +193,27 @@ Mode pengujian dapat diaktifkan melalui macro di `src/hw_tests.h`.
 // #define TEST_SIM800L
 ```
 
-Saat macro aktif, perangkat akan menjalankan pengujian tertentu sebelum masuk ke operasi normal.
+When a test macro is enabled, the device will run the corresponding validation routine before continuing normal operation.
 
-## Kontribusi
+## Contributing
 
-1. Fork repositori ini.
-2. Buat branch baru untuk fitur yang akan dikembangkan.
-3. Lakukan perubahan dan tambahkan pengujian jika diperlukan.
-4. Commit perubahan.
-5. Buat pull request.
+1. Fork this repository.
+2. Create a new branch for the feature or fix you want to work on.
+3. Make the required changes and add tests where relevant.
+4. Commit your changes.
+5. Open a pull request.
 
-## Lisensi
+## License
 
-Proyek ini dilisensikan di bawah MIT License. Lihat [LICENSE](LICENSE) untuk detail lengkap.
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for full details.
 
-## Kontak
+## Contact
 
 Developer: Hamin Baek
 
 - GitHub: [@hamin-baek](https://github.com/hamin-baek)
 
-## Ucapan terima kasih
+## Acknowledgments
 
 - ZMPT101B Arduino Library
 - TinyGSM Library
@@ -223,4 +223,4 @@ Developer: Hamin Baek
 
 ---
 
-Project ini cocok digunakan untuk monitoring listrik rumah tangga, fasilitas kecil, atau lingkungan yang memerlukan deteksi dini pemadaman listrik.
+This project is suitable for monitoring household electrical systems, small facilities, and environments where early outage detection is important.
