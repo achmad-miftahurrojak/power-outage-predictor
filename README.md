@@ -7,8 +7,6 @@ ESP32-based electrical monitoring and outage detection system for early warning 
 [![Status](https://img.shields.io/badge/Status-Prototype-orange.svg)](https://github.com/)
 [![Hardware](https://img.shields.io/badge/Target-ESP32-black.svg)](https://www.espressif.com/en/products/socs/esp32)
 
-Tags: esp32, iot, power-monitoring
-
 ## Table of Contents
 
 - [Project Overview](#project-overview)
