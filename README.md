@@ -1,25 +1,46 @@
 # Power Outage Predictor
 
-Power Outage Predictor is an ESP32-based monitoring system designed for the early detection of electrical disturbances and outages. It measures AC voltage, identifies warning conditions before a complete blackout, and sends alerts through SMS and MQTT to support faster response and better operational awareness.
+ESP32-based electrical monitoring and outage detection system for early warning and remote notification.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PlatformIO](https://img.shields.io/badge/PlatformIO-ESP32-blue.svg)](https://platformio.org/)
+[![Status](https://img.shields.io/badge/Status-Prototype-orange.svg)](https://github.com/)
+[![Hardware](https://img.shields.io/badge/Target-ESP32-black.svg)](https://www.espressif.com/en/products/socs/esp32)
+
+Tags: esp32, iot, power-monitoring
+
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Features](#features)
+- [Hardware](#hardware)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Directory Structure](#directory-structure)
+- [State Machine](#state-machine)
+- [Hardware Testing](#hardware-testing)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [Acknowledgments](#acknowledgments)
 
 ## Project Overview
 
-This project is intended for monitoring electrical quality in residential or small commercial environments. By combining AC voltage sensing, state machine logic, SD card logging, and remote notifications over SMS and MQTT, the system helps detect early voltage drops and power interruptions before they escalate.
+Power Outage Predictor is designed to monitor electrical quality in residential and small commercial environments. It continuously measures AC voltage, detects abnormal drops before a complete blackout occurs, and sends real-time alerts through SMS and MQTT so the system can respond faster and reduce downtime.
 
-Tags: esp32, iot, power-monitoring
+The design combines a ZMPT101B voltage sensor, ESP32 control logic, RTC timestamping, SD card logging, and local visual/audio alerts into a practical monitoring solution for power reliability.
 
 ## Features
 
 - Real-time AC voltage monitoring using the ZMPT101B sensor
-- Early detection of voltage decline before a complete outage occurs
+- Early warning before a complete power outage occurs
 - Structured system states: NORMAL, WARNING, OUTAGE, and RESTORED
-- Local alerts through LEDs and a buzzer
-- Remote notifications using SMS and MQTT
-- Historical data logging to microSD card with RTC timestamping
-- Hardware validation using a dedicated testing mode
+- Local alerting using LEDs and a buzzer
+- Remote notifications through SMS and MQTT
+- Historical data logging to a microSD card with RTC timestamps
+- Built-in hardware validation mode for testing individual components
 
 ## Hardware
 
@@ -30,7 +51,7 @@ Tags: esp32, iot, power-monitoring
 - SIM800L GSM module
 - DS3231 RTC module
 - microSD card module
-- Green, yellow, and red indicator LEDs
+- Green, yellow, and red LEDs
 - Active buzzer
 - Resistors, jumper wires, and supporting circuitry
 
@@ -52,7 +73,7 @@ GPIO4        | Buzzer          | Digital output
 
 - PlatformIO Core or PlatformIO IDE
 - Git
-- Compatible ESP32 board
+- A compatible ESP32 development board
 
 ## Installation
 
@@ -123,7 +144,7 @@ File: `include/secrets.h`
 
 1. Connect the ZMPT101B sensor to a known AC source.
 2. Read the serial output to inspect the measured voltage.
-3. Adjust `ZMPT101B_CALIBRATION` until the value matches the reference instrument used for testing.
+3. Adjust `ZMPT101B_CALIBRATION` until the measured value matches the reference instrument used for testing.
 
 ## Usage
 
@@ -131,19 +152,19 @@ File: `include/secrets.h`
 
 1. Power on the device.
 2. The green LED indicates the NORMAL state.
-3. The system monitors voltage continuously.
+3. The system continuously monitors voltage.
 4. Data is logged to the SD card at regular intervals.
 
 ### Event detection
 
 - WARNING: a significant voltage drop is detected
 - OUTAGE: voltage falls below the outage threshold
-- RESTORED: power is back to normal
+- RESTORED: the power supply returns to normal
 
 ### Remote monitoring
 
 - MQTT topics used: `power-monitor/telemetry`, `power-monitor/events`, and `power-monitor/status`
-- SMS alerts are automatically sent when an outage occurs and when service is restored
+- SMS alerts are sent automatically when an outage occurs and when service is restored
 
 ## Directory Structure
 
@@ -166,8 +187,9 @@ power-outage-predictor/
 ├── platformio.ini
 ├── LICENSE
 ├── README.md
-└── test/
-    └── test_main.cpp
+├── test/
+│   └── test_main.cpp
+└── .gitignore
 ```
 
 ## State Machine
@@ -193,13 +215,13 @@ Testing mode can be enabled through macros defined in `src/hw_tests.h`.
 // #define TEST_SIM800L
 ```
 
-When a test macro is enabled, the device will run the corresponding validation routine before continuing normal operation.
+When a test macro is enabled, the device executes the corresponding validation routine before continuing normal operation.
 
 ## Contributing
 
 1. Fork this repository.
-2. Create a new branch for the feature or fix you want to work on.
-3. Make the required changes and add tests where relevant.
+2. Create a feature branch for the change you want to make.
+3. Make the required update and add tests where appropriate.
 4. Commit your changes.
 5. Open a pull request.
 
@@ -223,4 +245,4 @@ Developer: Hamin Baek
 
 ---
 
-This project is suitable for monitoring household electrical systems, small facilities, and environments where early outage detection is important.
+This project is well suited for residential monitoring, small facility management, and environments where early outage detection is important.
