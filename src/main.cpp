@@ -1,148 +1,96 @@
 #include <Arduino.h>
-#include "config.h"
-#include "secrets.h"
-#include "state_machine.h"
-#include "sim800l_handler.h"
-#include "mqtt_handler.h"
-#include "sd_logger.h"
-#include <ZMPT101B.h>
-#include "hw_tests.h"
+#include <HardwareSerial.h>
+#include <esp_task_wdt.h>
 
-ZMPT101B zmpt101b(PIN_ZMPT101B);
-StateMachine stateMachine;
+// Pin Definitions
+#define PIN_ZMPT101B 34
+#define SIM_TX 17
+#define SIM_RX 16
 
-unsigned long lastRmsEvalTime = 0;
-unsigned long lastNormalLogTime = 0;
-unsigned long lastAlertLogTime = 0;
-long outageStartTime = 0;
+// Thresholds
+const int VOLTAGE_THRESHOLD = 180; // Volts AC
+const int BROWN_OUT_CONFIRMATION_TIME = 2000; // ms
 
-void setLEDs(SystemState state) {
-    digitalWrite(PIN_LED_GREEN, LOW);
-    digitalWrite(PIN_LED_YELLOW, LOW);
-    digitalWrite(PIN_LED_RED, LOW);
-    
-    switch (state) {
-        case STATE_NORMAL:
-        case STATE_RESTORED:
-            digitalWrite(PIN_LED_GREEN, HIGH);
-            break;
-        case STATE_WARNING:
-            digitalWrite(PIN_LED_YELLOW, HIGH);
-            break;
-        case STATE_OUTAGE:
-            digitalWrite(PIN_LED_RED, HIGH);
-            break;
-    }
-}
+// Hardware Serial for GSM Module
+HardwareSerial sim800l(2);
 
-void triggerBuzzer(bool active) {
-    digitalWrite(PIN_BUZZER, active ? HIGH : LOW);
-}
+// Variables
+unsigned long brownout_start_time = 0;
+bool is_outage = false;
+
+// Function declarations
+float getACVoltage();
+void sendSMSAlert(String message);
 
 void setup() {
-    runHardwareTestsIfEnabled(); // Will hijack execution if a test macro is defined in hw_tests.h
-    
-    Serial.begin(115200);
-    while (!Serial);
+  Serial.begin(115200);
+  sim800l.begin(9600, SERIAL_8N1, SIM_RX, SIM_TX);
+  
+  Serial.println("Power Outage Predictor Init...");
 
-    Serial.println("Starting Power Outage Predictor...");
+  // Init Watchdog Timer (10 seconds timeout)
+  esp_task_wdt_init(10, true);
+  esp_task_wdt_add(NULL);
 
-    // Setup GPIOs
-    pinMode(PIN_LED_GREEN, OUTPUT);
-    pinMode(PIN_LED_YELLOW, OUTPUT);
-    pinMode(PIN_LED_RED, OUTPUT);
-    pinMode(PIN_BUZZER, OUTPUT);
-    setLEDs(STATE_NORMAL);
-    triggerBuzzer(false);
-
-    // Initialize subsystems
-    setupSDAndRTC();
-    setupWiFiAndMQTT();
-    setupSIM800L();
-
-    // Initialize ZMPT101B
-    zmpt101b.setSensitivity(ZMPT101B_CALIBRATION);
-
-    Serial.println("Initialization complete. Entering main loop.");
+  // Wait for SIM800L to connect to network
+  delay(5000); 
+  sim800l.println("AT"); // Check GSM module
 }
 
 void loop() {
-    // Keep MQTT connection alive
-    maintainMQTTConnection();
+  esp_task_wdt_reset(); // Feed the watchdog
 
-    unsigned long currentMillis = millis();
+  float voltage = getACVoltage();
+  Serial.printf("AC Voltage: %.2f V\n", voltage);
 
-    // Evaluate state every RMS_WINDOW_MS (1 second)
-    if (currentMillis - lastRmsEvalTime >= RMS_WINDOW_MS) {
-        lastRmsEvalTime = currentMillis;
-
-        float currentVoltage = zmpt101b.getRmsVoltage();
-
-        bool stateChanged = stateMachine.evaluate(currentVoltage);
-        SystemState currentState = stateMachine.getCurrentState();
-
-        setLEDs(currentState);
-
-        if (stateChanged) {
-            String smsMsg = "";
-            const char* eventType = "";
-            float vDrop = stateMachine.getVoltageBeforeDrop();
-
-            switch (currentState) {
-                case STATE_WARNING:
-                    eventType = "pre_failure_pattern";
-                    Serial.println("STATE: WARNING");
-                    break;
-                case STATE_OUTAGE:
-                    eventType = "outage_start";
-                    outageStartTime = getUnixTime();
-                    triggerBuzzer(true);
-                    Serial.println("STATE: OUTAGE");
-                    
-                    smsMsg = "[ALERT] Listrik padam! Tegangan sblm drop: " + String(vDrop) + "V.";
-                    sendSMS(SMS_TARGET_NUMBER, smsMsg.c_str());
-                    publishEvent(eventType, vDrop, 0);
-                    break;
-                case STATE_RESTORED: {
-                    eventType = "outage_end";
-                    triggerBuzzer(false);
-                    long duration = getUnixTime() - outageStartTime;
-                    Serial.println("STATE: RESTORED");
-
-                    smsMsg = "[INFO] Listrik nyala. Durasi padam: " + String(duration / 60) + " mnt.";
-                    sendSMS(SMS_TARGET_NUMBER, smsMsg.c_str());
-                    publishEvent(eventType, 0.0, duration);
-                    break;
-                }
-                case STATE_NORMAL:
-                    eventType = "normal";
-                    triggerBuzzer(false);
-                    Serial.println("STATE: NORMAL");
-                    break;
-            }
-
-            // Immediately log event to SD
-            if (currentState != STATE_NORMAL) {
-                logDataToSD(currentVoltage, 0.0, String(currentState).c_str(), eventType);
-                lastAlertLogTime = currentMillis;
-            }
-        }
-
-        // Handle periodic logging based on current state
-        if (currentState == STATE_NORMAL || currentState == STATE_RESTORED) {
-            if (currentMillis - lastNormalLogTime >= TELEMETRY_NORMAL_INTERVAL_MS) {
-                lastNormalLogTime = currentMillis;
-                publishTelemetry(currentVoltage, 0.0);
-            }
-            if (currentMillis - lastNormalLogTime >= LOG_NORMAL_INTERVAL_MS) { // Use same timer variable or separate
-                logDataToSD(currentVoltage, 0.0, "NORMAL");
-            }
-        } else {
-            // High frequency logging for WARNING/OUTAGE
-            if (currentMillis - lastAlertLogTime >= LOG_ALERT_INTERVAL_MS) {
-                lastAlertLogTime = currentMillis;
-                logDataToSD(currentVoltage, 0.0, (currentState == STATE_WARNING) ? "WARNING" : "OUTAGE");
-            }
-        }
+  if (voltage < VOLTAGE_THRESHOLD) {
+    if (brownout_start_time == 0) {
+      brownout_start_time = millis(); // Mark start of dip
+    } else if (millis() - brownout_start_time > BROWN_OUT_CONFIRMATION_TIME && !is_outage) {
+      // Confirmed outage / severe brownout
+      is_outage = true;
+      Serial.println("ALERT: OUTAGE DETECTED!");
+      sendSMSAlert("ALERT: Power Grid Failure Detected! Voltage dropped below 180V.");
     }
+  } else {
+    if (is_outage) {
+      Serial.println("Power restored.");
+      sendSMSAlert("INFO: Power Grid Restored.");
+    }
+    is_outage = false;
+    brownout_start_time = 0;
+  }
+
+  delay(50); // High frequency sampling for fast detection
+}
+
+// Dummy AC Voltage calculation logic (RMS reading from analog sensor)
+float getACVoltage() {
+  uint32_t sum_sq = 0;
+  int n = 0;
+  unsigned long start = millis();
+  
+  // Sample for 1 AC cycle (20ms for 50Hz)
+  while (millis() - start < 20) {
+    int val = analogRead(PIN_ZMPT101B) - 2048; // Center at 0
+    sum_sq += val * val;
+    n++;
+  }
+  
+  if (n == 0) return 0;
+  float rms = sqrt(sum_sq / n);
+  // Calibration factor (depends on hardware trimming)
+  float voltage = rms * 0.45; 
+  return voltage;
+}
+
+void sendSMSAlert(String message) {
+  sim800l.println("AT+CMGF=1"); // Text mode
+  delay(100);
+  sim800l.println("AT+CMGS=\"+6281234567890\""); // Replace with target number
+  delay(100);
+  sim800l.print(message);
+  delay(100);
+  sim800l.write(26); // ASCII code for CTRL+Z
+  delay(1000);
 }
