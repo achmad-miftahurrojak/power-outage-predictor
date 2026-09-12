@@ -1,29 +1,67 @@
 # Power Outage Predictor
 
-An early warning system designed to detect power grid instability. By continuously monitoring AC voltage, this system identifies severe brownout patterns that often precede a complete grid failure. Once a critical voltage drop is confirmed, it dispatches an SMS alert via a GSM module.
+An early warning system that monitors AC voltage patterns to detect severe brownouts and predict power grid failures.
+
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+![Platform: ESP32](https://img.shields.io/badge/Platform-ESP32-lightgrey.svg)
+![Language: C++](https://img.shields.io/badge/Language-C++-red.svg)
+
+## Table of Contents
+1. [Features](#features)
+2. [Hardware Requirements](#hardware-requirements)
+3. [Getting Started](#getting-started)
+4. [Usage](#usage)
+5. [Directory Structure](#directory-structure)
+6. [Contributing](#contributing)
+7. [License](#license)
+8. [Contact](#contact)
 
 ## Features
-
-*   **AC Voltage Monitoring:** Safely calculates the Root Mean Square (RMS) of AC voltage using the ZMPT101B sensor.
-*   **Brownout Detection:** Identifies and confirms dangerous voltage drops (under 180V) before classifying them as grid failures.
-*   **Cellular Alerts:** Integrates with a SIM800L GSM module to send SMS notifications using standard AT commands.
-*   **Fault Tolerance:** Utilizes the ESP32 Hardware Watchdog Timer to automatically reboot the system if the GSM connection hangs.
+* Accurate AC voltage Root Mean Square calculation using a ZMPT101B sensor.
+* Pattern recognition to confirm critical voltage drops before issuing alerts.
+* Cellular integration using a SIM800L GSM module for SMS notifications.
+* System fault tolerance utilizing the ESP32 Hardware Watchdog Timer.
 
 ## Hardware Requirements
+* ESP32 Development Board
+* ZMPT101B AC Voltage Sensor
+* SIM800L GSM Module
 
-*   ESP32 Development Board
-*   ZMPT101B AC Voltage Sensor
-*   SIM800L GSM Module
+## Getting Started
 
-## Software Stack
+### Prerequisites
+* PlatformIO IDE.
+* An active SIM card with SMS capabilities.
 
-*   **Environment:** PlatformIO / Arduino framework
-*   **Language:** C++
-*   **Libraries:** `HardwareSerial`, `esp_task_wdt`
+### Installation
+```bash
+git clone https://github.com/hamin-baek/power-outage-predictor.git
+cd power-outage-predictor
+pio run --target upload
+```
 
-## Setup Instructions
+## Usage
+Connect the ZMPT101B to the mains voltage line safely and connect the GSM module to the serial pins defined in the source code. The device will monitor the voltage and send an SMS alert if the voltage drops below the defined threshold for a sustained period.
 
-1.  Open the project in PlatformIO.
-2.  Adjust the `VOLTAGE_THRESHOLD` and target phone number in `src/main.cpp`.
-3.  Upload the firmware to your ESP32 board.
-4.  Provide adequate power to the SIM800L module (requires up to 2A during transmission).
+## Directory Structure
+```text
+src/
+  main.cpp          # Main firmware logic
+include/            # Header files
+lib/                # Project specific libraries
+platformio.ini      # Build configuration
+```
+
+## Contributing
+Please open an issue first to discuss any proposed changes before submitting a pull request.
+
+## License
+This project is licensed under the MIT License.
+
+## Contact
+Developed by Achmad Miftahurrojak.
+GitHub: [hamin-baek](https://github.com/hamin-baek)
+
+***
+**Description:** Predictive power grid failure detection system using GSM alerts.
+**Tags:** esp32, power-grid, gsm
