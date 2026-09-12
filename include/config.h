@@ -1,0 +1,42 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+
+
+
+#define PIN_ZMPT101B 32 
+
+
+
+#define PIN_SIM_RX 16
+#define PIN_SIM_TX 17
+
+
+#define PIN_SD_CS 5
+
+
+
+
+
+
+#define PIN_BUZZER 4
+#define PIN_LED_GREEN 13   
+#define PIN_LED_YELLOW 14  
+#define PIN_LED_RED 27     
+
+
+
+#define VOLTAGE_NORMAL_MIN 200.0 
+#define VOLTAGE_WARNING_DROP 20.0 
+#define VOLTAGE_OUTAGE_MAX 10.0 
+
+
+#define ZMPT101B_CALIBRATION 500.0 
+#define ZMPT101B_FREQUENCY 50 
+#define RMS_WINDOW_MS 1000 
+
+#define TELEMETRY_NORMAL_INTERVAL_MS 60000 
+#define LOG_NORMAL_INTERVAL_MS 30000 
+#define LOG_ALERT_INTERVAL_MS 1000 
+
+#endif 

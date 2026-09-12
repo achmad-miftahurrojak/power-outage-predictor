@@ -1,0 +1,14 @@
+.pio
+.vscode
+include/secrets.h
+
+**/.env*
+!**/.env.example
+**/node_modules/
+**/dist/
+node_modules
+
+.env
+.env.*
+node_modules/
+dist/
