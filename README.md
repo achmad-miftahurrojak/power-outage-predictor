@@ -13,8 +13,7 @@ An early warning system that monitors AC voltage patterns to detect severe brown
 4. [Usage](#usage)
 5. [Directory Structure](#directory-structure)
 6. [Contributing](#contributing)
-7. [License](#license)
-8. [Contact](#contact)
+7. [Contact](#contact)
 
 ## Features
 * Accurate AC voltage Root Mean Square calculation using a ZMPT101B sensor.
@@ -55,9 +54,6 @@ platformio.ini      # Build configuration
 ## Contributing
 Please open an issue first to discuss any proposed changes before submitting a pull request.
 
-## License
-This project is licensed under the MIT License.
-
 ## Contact
 Developed by Achmad Miftahurrojak.
 GitHub: [hamin-baek](https://github.com/hamin-baek)
@@ -65,3 +61,4 @@ GitHub: [hamin-baek](https://github.com/hamin-baek)
 ***
 **Description:** Predictive power grid failure detection system using GSM alerts.
 **Tags:** esp32, power-grid, gsm
+
