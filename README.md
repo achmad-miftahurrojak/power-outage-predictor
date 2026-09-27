@@ -56,7 +56,7 @@ Please open an issue first to discuss any proposed changes before submitting a p
 
 ## Contact
 Developed by Achmad Miftahurrojak.
-GitHub: [hamin-baek](https://github.com/hamin-baek)
+GitHub: [achmad-miftahurrojak](https://github.com/achmad-miftahurrojak)
 
 ***
 **Description:** Predictive power grid failure detection system using GSM alerts.
