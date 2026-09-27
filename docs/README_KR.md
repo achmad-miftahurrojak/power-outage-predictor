@@ -2,7 +2,7 @@
 
 # Power Outage Predictor
 
-<a href="README.md"><img alt="English" src="https://img.shields.io/badge/English-DFE0E5"></a> <a href="README.id.md"><img alt="Bahasa Indonesia" src="https://img.shields.io/badge/Bahasa%20Indonesia-DFE0E5"></a> <a href="README.ko.md"><img alt="한국어" src="https://img.shields.io/badge/%ED%95%9C%EA%B5%AD%EC%96%B4-DFE0E5"></a>
+<a href="../README.md"><img alt="English" src="https://img.shields.io/badge/English-DFE0E5"></a> <a href="README_ID.md"><img alt="Bahasa Indonesia" src="https://img.shields.io/badge/Bahasa%20Indonesia-DFE0E5"></a> <a href="README_KR.md"><img alt="한국어" src="https://img.shields.io/badge/%ED%95%9C%EA%B5%AD%EC%96%B4-DFE0E5"></a>
 
 <img alt="C++" src="https://img.shields.io/badge/C%2B%2B-11-00599C?logo=c%2B%2B&logoColor=white"> <img alt="ESP32" src="https://img.shields.io/badge/ESP32-E7352C?logo=espressif&logoColor=white"> <img alt="GSM" src="https://img.shields.io/badge/GSM-SIM800L-2E8B57">
 
@@ -27,7 +27,7 @@ AC 전압 상태를 분류하고 GSM SMS로 정전을 보고하는 ESP32 펌웨�
 
 ## 아키텍처
 
-상태 전환과 로컬 설정 경계는 [ARCHITECTURE.md](ARCHITECTURE.md)에서 확인할 수 있습니다.
+상태 전환과 로컬 설정 경계는 [ARCHITECTURE.md](../ARCHITECTURE.md)에서 확인할 수 있습니다.
 
 ## 빌드 및 업로드
 
@@ -49,4 +49,5 @@ AC 전압 상태를 분류하고 GSM SMS로 정전을 보고하는 ESP32 펌웨�
 
 ## 라이선스
 
-[MIT](LICENSE) · [GitHub 프로필](https://github.com/achmad-miftahurrojak)
+[MIT](../LICENSE) · [GitHub 프로필](https://github.com/achmad-miftahurrojak)
+
