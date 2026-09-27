@@ -70,6 +70,12 @@ pio test -e native
 
 Set the serial port, alert thresholds, and local phone number in the device configuration. Keep credentials and CA material out of Git.
 
+## Testing the state machine
+
+The native test environment exercises the outage state transitions without requiring an ESP32 or mains-connected hardware. Run it after changing threshold logic or recovery handling:
+
+    pio test -e native
+
 ## Project layout
 
 ```text
