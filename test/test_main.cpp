@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <unity.h>
 #include "state_machine.h"
 #include "config.h"
@@ -29,7 +28,7 @@ void test_warning_state(void) {
     
     TEST_ASSERT_EQUAL(STATE_WARNING, sm.getCurrentState());
     TEST_ASSERT_TRUE(changed);
-    TEST_ASSERT_EQUAL_FLOAT(150.0, sm.getVoltageBeforeDrop());
+    TEST_ASSERT_EQUAL_FLOAT(220.0, sm.getVoltageBeforeDrop());
 }
 
 void test_outage_state(void) {

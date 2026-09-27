@@ -1,5 +1,15 @@
 #include "mqtt_handler.h"
+#if __has_include("secrets.h")
 #include "secrets.h"
+#else
+static const char* WIFI_SSID = "";
+static const char* WIFI_PASS = "";
+static const char* MQTT_SERVER = "";
+static const int MQTT_PORT = 8883;
+static const char* MQTT_USER = "";
+static const char* MQTT_PASS = "";
+static const char* MQTT_CLIENT_ID = "power_predictor_01";
+#endif
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
@@ -32,13 +42,18 @@ void setupWiFiAndMQTT() {
         Serial.println("\nWiFi connection failed. Will retry later.");
     }
 
-    espClient.setInsecure(); 
+#if defined(MQTT_ROOT_CA)
+    espClient.setCACert(MQTT_ROOT_CA);
+#endif
     mqttClient.setServer(MQTT_SERVER, MQTT_PORT);
 
     mqttClient.setBufferSize(512);
 }
 
 void maintainMQTTConnection() {
+#if !defined(MQTT_ROOT_CA)
+    return;
+#else
     if (WiFi.status() != WL_CONNECTED) {
         return; 
     }
@@ -55,6 +70,7 @@ void maintainMQTTConnection() {
         }
     }
     mqttClient.loop();
+#endif
 }
 
 void publishTelemetry(float v_rms, float i_rms) {

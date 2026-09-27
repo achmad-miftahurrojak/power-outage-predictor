@@ -24,6 +24,7 @@ private:
     SystemState currentState;
     SystemState previousState;
     float voltageBeforeDrop;
+    float lastNormalVoltage;
     
     
     unsigned long timeInWarningState;

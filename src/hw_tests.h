@@ -3,7 +3,11 @@
 
 #include <Arduino.h>
 #include "config.h"
+#if __has_include("secrets.h")
 #include "secrets.h"
+#else
+static const char* SMS_TARGET_NUMBER = "+620000000000";
+#endif
 #include "sd_logger.h"
 #include "sim800l_handler.h"
 #include "mqtt_handler.h"

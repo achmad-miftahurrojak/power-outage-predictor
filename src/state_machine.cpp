@@ -1,11 +1,11 @@
 #include "state_machine.h"
 #include "config.h"
-#include <Arduino.h>
 
 StateMachine::StateMachine() : 
     currentState(STATE_NORMAL), 
     previousState(STATE_NORMAL),
     voltageBeforeDrop(220.0),
+    lastNormalVoltage(220.0),
     timeInWarningState(0) 
 {}
 
@@ -20,7 +20,7 @@ bool StateMachine::evaluate(float v_rms) {
     else if (v_rms < (VOLTAGE_NORMAL_MIN * (1.0 - VOLTAGE_WARNING_DROP / 100.0))) {
         if (currentState == STATE_NORMAL || currentState == STATE_RESTORED) {
             newState = STATE_WARNING;
-            voltageBeforeDrop = v_rms; 
+            voltageBeforeDrop = lastNormalVoltage;
         }
     } 
     else if (v_rms >= VOLTAGE_NORMAL_MIN) {
@@ -31,6 +31,10 @@ bool StateMachine::evaluate(float v_rms) {
         } else {
             newState = STATE_NORMAL;
         }
+    }
+
+    if (currentState == STATE_NORMAL && v_rms >= VOLTAGE_NORMAL_MIN) {
+        lastNormalVoltage = v_rms;
     }
 
     if (newState != currentState) {
