@@ -2,6 +2,8 @@
 
 # Power Outage Predictor
 
+[English](README.md) · [Bahasa Indonesia](README.id.md) · [한국어](README.ko.md)
+
 ESP32 firmware that classifies AC voltage conditions and reports outages through GSM SMS.
 
 ![C++](https://img.shields.io/badge/C%2B%2B-11-00599C?logo=c%2B%2B&logoColor=white) ![PlatformIO](https://img.shields.io/badge/PlatformIO-Core-F56600?logo=platformio&logoColor=white) ![ESP32](https://img.shields.io/badge/ESP32-Espressif-E7352C) ![GSM](https://img.shields.io/badge/GSM-SIM800L-2E8B57)
