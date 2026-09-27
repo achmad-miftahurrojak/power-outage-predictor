@@ -2,7 +2,9 @@
 
 # Power Outage Predictor
 
-[English](README.md) · [Bahasa Indonesia](README.id.md) · [한국어](README.ko.md)
+<a href="README.md"><img alt="English" src="https://img.shields.io/badge/English-DFE0E5"></a> <a href="README.id.md"><img alt="Bahasa Indonesia" src="https://img.shields.io/badge/Bahasa%20Indonesia-DFE0E5"></a> <a href="README.ko.md"><img alt="한국어" src="https://img.shields.io/badge/%ED%95%9C%EA%B5%AD%EC%96%B4-DFE0E5"></a>
+
+<img alt="C++" src="https://img.shields.io/badge/C%2B%2B-11-00599C?logo=c%2B%2B&logoColor=white"> <img alt="ESP32" src="https://img.shields.io/badge/ESP32-E7352C?logo=espressif&logoColor=white"> <img alt="GSM" src="https://img.shields.io/badge/GSM-SIM800L-2E8B57">
 
 AC 전압 상태를 분류하고 GSM SMS로 정전을 보고하는 ESP32 펌웨어입니다.
 
