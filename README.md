@@ -9,7 +9,7 @@ An intelligent hardware monitoring system designed to detect and predict electri
 ## Table of Contents
 
 1. [Features](#features)
-2. [Screenshot](#screenshot)
+2. [Architecture](#architecture)
 3. [Getting Started](#getting-started)
 4. [Usage](#usage)
 5. [Directory Structure](#directory-structure)
@@ -25,9 +25,9 @@ An intelligent hardware monitoring system designed to detect and predict electri
 - Fail-Safe Operation: Designed to operate on backup power to ensure alert delivery during an active outage.
 - Optimized Build System: Leverages Turborepo and PlatformIO for rapid, reproducible firmware compilation.
 
-## Screenshot
+## Architecture
 
-![Hardware Prototype](https://via.placeholder.com/800x450?text=Hardware+Prototype+Demo)
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the sensing, state, logging, and alert flow.
 
 ## Getting Started
 
@@ -40,7 +40,7 @@ An intelligent hardware monitoring system designed to detect and predict electri
 ### Installation Steps
 
 ```bash
-git clone https://github.com/hamin-baek/hamin-baek.git
+git clone https://github.com/achmad-miftahurrojak/power-outage-predictor.git
 cd hardware/power-outage-predictor
 npm install
 ```
@@ -82,4 +82,4 @@ This project is licensed under the MIT License.
 ## Contact
 
 Created by Achmad Miftahurrojak.
-[GitHub](https://github.com/hamin-baek)
+[GitHub](https://github.com/achmad-miftahurrojak)
